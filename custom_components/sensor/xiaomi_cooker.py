@@ -15,13 +15,20 @@ COOKER_DOMAIN = 'xiaomi_cooker'
 DATA_KEY = 'xiaomi_cooker_data'
 
 SENSOR_TYPES = {
-    'mode': ['Mode', 'mode', None],
-    'menu': ['Menu', 'menu', None],
-    'temperature': ['Temperature', 'temperature', '°C'],
-    'remaining': ['Remaining', 'remaining', 'min'],
-    'duration': ['Duration', 'duration', 'min'],
-    'favorite': ['Favorite', 'favorite', None],
+    'mode': ['Mode', None, 'mode', None],
+    'menu': ['Menu', None, 'menu', None],
+    'temperature': ['Temperature', None, 'temperature', '°C'],
+    'remaining': ['Remaining', None, 'remaining', 'min'],
+    'duration': ['Duration', None, 'duration', 'min'],
+    'favorite': ['Favorite', None, 'favorite', None],
+    'state': ['State', 'stage', 'state', None],
+    'rice_id': ['Rice Id', 'stage', 'rice_id', None],
+    'taste': ['Taste', 'stage', 'taste', None],
+    'taste_phase': ['Taste Phase', 'stage', 'taste_phase', None],
+    'stage_name': ['Stage Name', 'stage', 'name', None],
+    'stage_description': ['Stage Description', 'stage', 'description', None],
 }
+
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the Xiaomi Cooker sensors."""
@@ -39,13 +46,14 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 class XiaomiCookerSensor(Entity):
 
-    def __init__(self, device, host, type):
+    def __init__(self, device, host, config):
         """Initialize sensor."""
         self._device = device
         self._host = host
-        self._name = type[0]
-        self._attr = type[1]
-        self._unit_of_measurement = type[2]
+        self._name = config[0]
+        self._child = config[1]
+        self._attr = config[2]
+        self._unit_of_measurement = config[3]
         self._state = None
 
         self.entity_id = ENTITY_ID_FORMAT.format('{}_{}'.format(COOKER_DOMAIN, slugify(self._name)))
@@ -68,6 +76,12 @@ class XiaomiCookerSensor(Entity):
 
         state = self.hass.data[DATA_KEY][host]
 
+        if self._child is not None:
+            state = getattr(state, self._child, None)
+            # Unset state if child attribute isn't available anymore
+            if state is None:
+                self._state = None
+
         if state is not None:
             value = getattr(state, self._attr, None)
             if isinstance(value, Enum):
@@ -75,7 +89,7 @@ class XiaomiCookerSensor(Entity):
             else:
                 self._state = value
 
-            self.async_schedule_update_ha_state()
+        self.async_schedule_update_ha_state()
 
     @property
     def state(self):
