@@ -10,19 +10,33 @@ Credits: Thanks to [Rytilahti](https://github.com/rytilahti/python-miio) for all
 
 ### Rice Cooker V2
 
-* Start cooking a profile
-* Stop cooking
-* Attributes
+* TODO: Start cooking a profile
+* TODO: Stop cooking
+* Sensors
   - mode
   - menu
   - temperature
-  - start_time
   - remaining
-  - cooking_delayed
   - duration
-  - settings
   - favorite
-  - stage(?)
+  - state (available while cooking)
+  - rice_id (available while cooking)
+  - taste (available while cooking)
+  - taste_phase (available while cooking)
+  - stage_name (available while cooking)
+  - stage_description (available while cooking)
+* Switches
+  - TODO: Start/Stop is possible if a default profile is available (Recipe input_select?)
+  - TODO: Buzzer on/off
+  - TODO: Turn off the backlight on idle
+* Chart
+  - TODO: Temperature History (Like the temperature chart of the weather forecast)
+* Services
+  - TODO: stop_outdated_firmware
+  - TODO: set_no_warnings / set_acknowledge
+  - TODO: set_interaction
+  - TODO: set_menu
+  - TODO: get_temperature_history
 
 ## Setup
 
@@ -30,6 +44,7 @@ Credits: Thanks to [Rytilahti](https://github.com/rytilahti/python-miio) for all
 # configuration.yaml
 
 platform: xiaomi_cooker
+  name: Xiaomi Rice Cooker
   host: 192.168.130.88
   token: b7c4a758c251955d2c24b1d9e41ce47d
   model: chunmi.cooker.normal2
@@ -38,6 +53,7 @@ platform: xiaomi_cooker
 Configuration variables:
 - **host** (*Required*): The IP of your cooker.
 - **token** (*Required*): The API token of your cooker.
+- **name** (*Optional*): The name of your cooker.
 - **model** (*Optional*): The model of your device. Valid values are `chunmi.cooker.normal2` and `chunmi.cooker.normal5`. This setting can be used to bypass the device model detection and is recommended if your device isn't always available.
 
 ## Platform services
