@@ -40,7 +40,7 @@ CONFIG_SCHEMA = vol.Schema({
     })
 }, extra=vol.ALLOW_EXTRA)
 
-REQUIREMENTS = ['python-miio>=0.3.7']
+REQUIREMENTS = ['python-miio>=0.4.0']
 
 ATTR_MODEL = 'model'
 ATTR_PROFILE = 'profile'
