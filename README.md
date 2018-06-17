@@ -43,7 +43,7 @@ Credits: Thanks to [Rytilahti](https://github.com/rytilahti/python-miio) for all
 ```yaml
 # configuration.yaml
 
-platform: xiaomi_cooker
+xiaomi_cooker:
   name: Xiaomi Rice Cooker
   host: 192.168.130.88
   token: b7c4a758c251955d2c24b1d9e41ce47d
