@@ -64,7 +64,7 @@ Start cooking a profile.
 
 | Service data attribute    | Optional | Description                                                          |
 |---------------------------|----------|----------------------------------------------------------------------|
-| `entity_id`               |      yes | Only act on a specific air purifier. Else targets all.               |
+| `entity_id`               |      yes | Only act on a specific cooker. Else targets all.                     |
 | `profile`                 |       no | Profile data which describes the temperature curve.                  |
 
 #### Service `xiaomi_cooker.stop`
@@ -73,4 +73,4 @@ Stop the cooking process.
 
 | Service data attribute    | Optional | Description                                                          |
 |---------------------------|----------|----------------------------------------------------------------------|
-| `entity_id`               |      yes | Only act on a specific air purifier. Else targets all.               |
+| `entity_id`               |      yes | Only act on a specific cooker. Else targets all.                     |
