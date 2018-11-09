@@ -67,6 +67,12 @@ Start cooking a profile.
 | `entity_id`               |      yes | Only act on a specific cooker. Else targets all.                     |
 | `profile`                 |       no | Profile data which describes the temperature curve.                  |
 
+Some cooking profile examples: https://raw.githubusercontent.com/rytilahti/python-miio/master/miio/data/cooker_profiles.json
+
+- `MODEL_PRESSURE`: `chunmi.cooker.press1`, `chunmi.cooker.press2`
+- `MODEL_NORMAL_GROUP1`: `chunmi.cooker.normal2`, `chunmi.cooker.normal5`
+- `MODEL_NORMAL_GROUP2`: `chunmi.cooker.normal3`, `chunmi.cooker.normal4`
+
 #### Service `xiaomi_cooker.stop`
 
 Stop the cooking process.
