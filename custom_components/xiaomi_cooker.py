@@ -25,8 +25,23 @@ SCAN_INTERVAL = timedelta(seconds=30)
 
 CONF_MODEL = 'model'
 
-SUPPORTED_MODELS = ['chunmi.cooker.normal2',
-                    'chunmi.cooker.normal5']
+MODEL_PRESSURE1 = 'chunmi.cooker.press1'
+MODEL_PRESSURE2 = 'chunmi.cooker.press2'
+MODEL_NORMAL1 = 'chunmi.cooker.normal1'
+MODEL_NORMAL2 = 'chunmi.cooker.normal2'
+MODEL_NORMAL3 = 'chunmi.cooker.normal3'
+MODEL_NORMAL4 = 'chunmi.cooker.normal4'
+MODEL_NORMAL5 = 'chunmi.cooker.normal5'
+
+SUPPORTED_MODELS = [
+    MODEL_PRESSURE1,
+    MODEL_PRESSURE2,
+    MODEL_NORMAL1,
+    MODEL_NORMAL2,
+    MODEL_NORMAL3,
+    MODEL_NORMAL4,
+    MODEL_NORMAL5,
+]
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
