@@ -48,7 +48,7 @@ ATTR_PROFILE = 'profile'
 SUCCESS = ['ok']
 
 SERVICE_SCHEMA = vol.Schema({
-    vol.Optional(ATTR_ENTITY_ID): cv.entity_ids,
+    #    vol.Optional(ATTR_ENTITY_ID): cv.entity_ids,
 })
 
 SERVICE_SCHEMA_START = SERVICE_SCHEMA.extend({
@@ -57,11 +57,6 @@ SERVICE_SCHEMA_START = SERVICE_SCHEMA.extend({
 
 SERVICE_START = 'start'
 SERVICE_STOP = 'stop'
-
-SERVICE_TO_METHOD = {
-    SERVICE_START: {'method': 'async_start', 'schema': SERVICE_SCHEMA_START},
-    SERVICE_STOP: {'method': 'async_stop'},
-}
 
 
 # pylint: disable=unused-argument
@@ -126,6 +121,21 @@ def setup(hass, config):
     update(utcnow())
     track_time_interval(hass, update, scan_interval)
 
+    def start_service(call):
+        """Service to start cooking."""
+        profile = call.data.get(ATTR_PROFILE)
+        cooker.start(profile)
+
+    def stop_service(call):
+        """Service to stop cooking."""
+        cooker.stop()
+
+    hass.services.register(
+        DOMAIN, SERVICE_START, start_service, schema=SERVICE_SCHEMA_START)
+
+    hass.services.register(
+        DOMAIN, SERVICE_STOP, stop_service, schema=SERVICE_SCHEMA)
+
     return True
 
 
@@ -170,7 +180,8 @@ class XiaomiMiioDevice(Entity):
         """Call a device command handling error messages."""
         from miio import DeviceException
         try:
-            result = await self.hass.async_add_job(
+            result = await
+            self.hass.async_add_job(
                 partial(func, *args, **kwargs))
 
             _LOGGER.info("Response received from miio device: %s", result)
