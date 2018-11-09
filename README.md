@@ -10,8 +10,8 @@ Credits: Thanks to [Rytilahti](https://github.com/rytilahti/python-miio) for all
 
 ### Rice Cooker V2
 
-* TODO: Start cooking a profile
-* TODO: Stop cooking
+* Start cooking a profile
+* Stop cooking
 * Sensors
   - mode
   - menu
