@@ -13,6 +13,8 @@ _LOGGER = logging.getLogger(__name__)
 
 COOKER_DOMAIN = 'xiaomi_cooker'
 DATA_KEY = 'xiaomi_cooker_data'
+DATA_TEMPERATURE_HISTORY = 'temperature_history'
+DATA_STATE = 'state'
 
 SENSOR_TYPES = {
     'mode': ['Mode', None, 'mode', None],
@@ -71,10 +73,13 @@ class XiaomiCookerSensor(Entity):
     @callback
     def async_update_callback(self, host):
         """Update state."""
+        from miio.cooker import OperationMode
+
         if self._host is not host:
             return
 
-        state = self.hass.data[DATA_KEY][host]
+        state = self.hass.data[DATA_KEY][host].get(DATA_STATE)
+        temperature_history = self.hass.data[DATA_KEY][host].get(DATA_TEMPERATURE_HISTORY)
 
         if self._child is not None:
             state = getattr(state, self._child, None)
@@ -87,7 +92,12 @@ class XiaomiCookerSensor(Entity):
             if isinstance(value, Enum):
                 self._state = value.name
             else:
-                self._state = value
+                if self._attr == 'temperature' and \
+                        state.mode is OperationMode.Running and \
+                        temperature_history is not None:
+                    self._state = temperature_history.temperatures.pop()
+                else:
+                    self._state = value
 
         self.async_schedule_update_ha_state()
 

@@ -20,6 +20,8 @@ _LOGGER = logging.getLogger(__name__)
 DEFAULT_NAME = 'Xiaomi Miio Cooker'
 DOMAIN = 'xiaomi_cooker'
 DATA_KEY = 'xiaomi_cooker_data'
+DATA_TEMPERATURE_HISTORY = 'temperature_history'
+DATA_STATE = 'state'
 
 SCAN_INTERVAL = timedelta(seconds=30)
 
@@ -78,9 +80,6 @@ SERVICE_STOP = 'stop'
 def setup(hass, config):
     """Set up the platform from config."""
     from miio import Device, DeviceException
-    if DATA_KEY not in hass.data:
-        hass.data[DATA_KEY] = {}
-
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
 
@@ -89,6 +88,10 @@ def setup(hass, config):
     name = config[DOMAIN][CONF_NAME]
     model = config[DOMAIN].get(CONF_MODEL)
     scan_interval = config[DOMAIN][CONF_SCAN_INTERVAL]
+
+    if DATA_KEY not in hass.data:
+        hass.data[DATA_KEY] = {}
+        hass.data[DATA_KEY][host] = {}
 
     _LOGGER.info("Initializing with host %s (token %s...)", host, token[:5])
 
@@ -122,11 +125,16 @@ def setup(hass, config):
 
     def update(event_time):
         """Update device status."""
+        from miio.cooker import OperationMode
+
         try:
             state = cooker.status()
             _LOGGER.debug("Got new state: %s", state)
+            hass.data[DATA_KEY][host][DATA_STATE] = state
 
-            hass.data[DATA_KEY][host] = state
+            if state.mode is OperationMode.Running:
+                hass.data[DATA_KEY][host][DATA_TEMPERATURE_HISTORY] = cooker.get_temperature_history()
+
             dispatcher_send(hass, '{}_updated'.format(DOMAIN), host)
 
         except DeviceException as ex:
