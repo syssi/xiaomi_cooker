@@ -132,7 +132,7 @@ def setup(hass, config):
             _LOGGER.debug("Got new state: %s", state)
             hass.data[DATA_KEY][host][DATA_STATE] = state
 
-            if state.mode is OperationMode.Running:
+            if state.mode in [OperationMode.Running, OperationMode.AutoKeepWarm]:
                 hass.data[DATA_KEY][host][DATA_TEMPERATURE_HISTORY] = cooker.get_temperature_history()
 
             dispatcher_send(hass, '{}_updated'.format(DOMAIN), host)
