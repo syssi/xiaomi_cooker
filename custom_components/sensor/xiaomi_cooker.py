@@ -94,7 +94,7 @@ class XiaomiCookerSensor(Entity):
             else:
                 if self._attr == 'temperature' and \
                         state.mode in [OperationMode.Running, OperationMode.AutoKeepWarm] and \
-                        temperature_history is not None:
+                        temperature_history:
                     self._state = temperature_history.temperatures.pop()
                 else:
                     self._state = value
