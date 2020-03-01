@@ -1,6 +1,6 @@
 {
   "domain": "xiaomi_cooker",
-  "name": "Xiaomi Mi Electric Rice Cooker integration for Home Assistant",
+  "name": "Xiaomi Mi Electric Rice Cooker",
   "documentation": "https://github.com/syssi/xiaomi_cooker",
   "requirements": [
     "construct==2.9.45",
