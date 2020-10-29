@@ -10,7 +10,7 @@ from homeassistant.util import slugify
 _LOGGER = logging.getLogger(__name__)
 
 COOKER_DOMAIN = "xiaomi_miio_cooker"
-DATA_KEY = "xiaomi_miio_cooker"
+DATA_KEY = "xiaomi_miio_cooker_data"
 DATA_TEMPERATURE_HISTORY = "temperature_history"
 DATA_STATE = "state"
 
