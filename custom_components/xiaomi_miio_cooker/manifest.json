@@ -1,5 +1,5 @@
 {
-  "domain": "xiaomi_cooker",
+  "domain": "xiaomi_miio_cooker",
   "name": "Xiaomi Mi Electric Rice Cooker",
   "documentation": "https://github.com/syssi/xiaomi_cooker",
   "requirements": [

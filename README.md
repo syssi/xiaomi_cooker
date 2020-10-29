@@ -49,7 +49,7 @@ You can install this custom component by adding this repository ([https://github
 ```yaml
 # configuration.yaml
 
-xiaomi_cooker:
+xiaomi_miio_cooker:
   name: Xiaomi Rice Cooker
   host: 192.168.130.88
   token: b7c4a758c251955d2c24b1d9e41ce47d
@@ -64,13 +64,13 @@ Configuration variables:
 
 ## Platform services
 
-#### Service `xiaomi_cooker.start`
+#### Service `xiaomi_miio_cooker.start`
 
 Start cooking a profile.
 
 | Service data attribute    | Optional | Description                                                          |
 |---------------------------|----------|----------------------------------------------------------------------|
-| `entity_id`               |      yes | Only act on a specific cooker. Else targets all.                     |
+| `entity_id`               |       no | Only act on a specific cooker.                                       |
 | `profile`                 |       no | Profile data which describes the temperature curve.                  |
 
 Some cooking profile examples: https://raw.githubusercontent.com/rytilahti/python-miio/master/miio/data/cooker_profiles.json
@@ -79,10 +79,10 @@ Some cooking profile examples: https://raw.githubusercontent.com/rytilahti/pytho
 - `MODEL_NORMAL_GROUP1`: `chunmi.cooker.normal2`, `chunmi.cooker.normal5`
 - `MODEL_NORMAL_GROUP2`: `chunmi.cooker.normal3`, `chunmi.cooker.normal4`
 
-#### Service `xiaomi_cooker.stop`
+#### Service `xiaomi_miio_cooker.stop`
 
 Stop the cooking process.
 
 | Service data attribute    | Optional | Description                                                          |
 |---------------------------|----------|----------------------------------------------------------------------|
-| `entity_id`               |      yes | Only act on a specific cooker. Else targets all.                     |
+| `entity_id`               |       no | Only act on a specific cooker.                                       |

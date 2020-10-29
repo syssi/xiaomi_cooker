@@ -3,7 +3,6 @@ import logging
 
 from enum import Enum
 
-# from homeassistant.components.xiaomi_cooker import (DOMAIN as COOKER_DOMAIN, DATA_KEY)
 from homeassistant.components.sensor import ENTITY_ID_FORMAT
 from homeassistant.core import callback
 from homeassistant.helpers.entity import Entity
@@ -11,8 +10,8 @@ from homeassistant.util import slugify
 
 _LOGGER = logging.getLogger(__name__)
 
-COOKER_DOMAIN = "xiaomi_cooker"
-DATA_KEY = "xiaomi_cooker_data"
+COOKER_DOMAIN = "xiaomi_miio_cooker"
+DATA_KEY = "xiaomi_miio_cooker"
 DATA_TEMPERATURE_HISTORY = "temperature_history"
 DATA_STATE = "state"
 
