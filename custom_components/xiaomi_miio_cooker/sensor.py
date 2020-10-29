@@ -1,6 +1,5 @@
 import asyncio
 import logging
-
 from enum import Enum
 
 from homeassistant.components.sensor import ENTITY_ID_FORMAT
