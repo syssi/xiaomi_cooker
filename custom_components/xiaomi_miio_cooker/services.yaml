@@ -1,0 +1,17 @@
+start:
+  description: Start cooking a profile.
+  fields:
+    entity_id:
+      description: Name of the xiaomi miio entity.
+      example: "xiaomi_miio_cooker.xiaomi_miio_device"
+    profile:
+      description: Profile data which describes the temperature curve.
+      example: 0001E10100000000000080026E10082B126E1412698CAA555555550014280A6E0C02050506050505055A14040A0C0C0D00040505060A0F086E6E20000C0A5A28036468686A0004040500000000000000010202020204040506070708001212180C1E2D2D37000000000000000000000099A5
+
+stop:
+  description: Stop the cooking process.
+  fields:
+    entity_id:
+      description: Name of the xiaomi miio entity.
+      example: "xiaomi_miio_cooker.xiaomi_miio_device"
+
