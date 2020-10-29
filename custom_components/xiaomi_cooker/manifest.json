@@ -3,8 +3,8 @@
   "name": "Xiaomi Mi Electric Rice Cooker",
   "documentation": "https://github.com/syssi/xiaomi_cooker",
   "requirements": [
-    "construct==2.9.45",
-    "python-miio>=0.4.8"
+    "construct==2.10.56",
+    "python-miio>=0.5.3"
   ],
   "dependencies": [],
   "codeowners": [
