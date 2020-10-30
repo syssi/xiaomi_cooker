@@ -1,6 +1,7 @@
 import asyncio
 import logging
 from enum import Enum
+from typing import Optional
 
 from homeassistant.components.sensor import ENTITY_ID_FORMAT
 from homeassistant.core import callback
@@ -15,18 +16,24 @@ DATA_TEMPERATURE_HISTORY = "temperature_history"
 DATA_STATE = "state"
 
 SENSOR_TYPES = {
-    "mode": ["Mode", None, "mode", None],
-    "menu": ["Menu", None, "menu", None],
-    "temperature": ["Temperature", None, "temperature", "°C"],
-    "remaining": ["Remaining", None, "remaining", "min"],
-    "duration": ["Duration", None, "duration", "min"],
-    "favorite": ["Favorite", None, "favorite", None],
-    "state": ["State", "stage", "state", None],
-    "rice_id": ["Rice Id", "stage", "rice_id", None],
-    "taste": ["Taste", "stage", "taste", None],
-    "taste_phase": ["Taste Phase", "stage", "taste_phase", None],
-    "stage_name": ["Stage Name", "stage", "name", None],
-    "stage_description": ["Stage Description", "stage", "description", None],
+    "mode": ["Mode", None, "mode", None, "mdi:bowl"],
+    "menu": ["Menu", None, "menu", None, "mdi:menu"],
+    "temperature": ["Temperature", None, "temperature", "°C", None],
+    "remaining": ["Remaining", None, "remaining", "min", "mdi:timer"],
+    "duration": ["Duration", None, "duration", "min", "mdi:timelapse"],
+    "favorite": ["Favorite", None, "favorite", None, "mdi:information-outline"],
+    "state": ["State", "stage", "state", None, "mdi:playlist-check"],
+    "rice_id": ["Rice Id", "stage", "rice_id", None, "mdi:rice"],
+    "taste": ["Taste", "stage", "taste", None, "mdi:flash-outline"],
+    "taste_phase": ["Taste Phase", "stage", "taste_phase", None, "mdi:flash-outline"],
+    "stage_name": ["Stage Name", "stage", "name", None, "mdi:stairs"],
+    "stage_description": [
+        "Stage Description",
+        "stage",
+        "description",
+        None,
+        "mdi:stairs",
+    ],
 }
 
 
@@ -53,6 +60,7 @@ class XiaomiCookerSensor(Entity):
         self._child = config[1]
         self._attr = config[2]
         self._unit_of_measurement = config[3]
+        self._icon = config[4]
         self._state = None
 
         self.entity_id = ENTITY_ID_FORMAT.format(
@@ -116,6 +124,11 @@ class XiaomiCookerSensor(Entity):
     def unit_of_measurement(self):
         """Return the unit of measurement the state is expressed in."""
         return self._unit_of_measurement
+
+    @property
+    def icon(self) -> Optional[str]:
+        """Return the icon to use in the frontend, if any."""
+        return self._icon
 
     @property
     def should_poll(self):

@@ -59,7 +59,7 @@ xiaomi_miio_cooker:
 switch:
   - platform: template
     switches:
-      - xiaomi_miio_cooker:
+      xiaomi_miio_cooker:
         value_template: "{{ is_state('sensor.xiaomi_miio_cooker_mode', 'Running') }}"
         turn_on:
           service: xiaomi_miio_cooker.start
@@ -74,6 +74,45 @@ Configuration variables:
 - **token** (*Required*): The API token of your cooker.
 - **name** (*Optional*): The name of your cooker.
 - **model** (*Optional*): The model of your device. Valid values are `chunmi.cooker.normal2` and `chunmi.cooker.normal5`. This setting can be used to bypass the device model detection and is recommended if your device isn't always available.
+
+## Lovelace
+
+```
+type: vertical-stack
+cards:
+  - type: entities
+    title: Ricecooker
+    state_color: false
+    entities:
+      - entity: switch.xiaomi_miio_cooker
+      - entity: sensor.xiaomi_miio_cooker_duration
+      - entity: sensor.xiaomi_miio_cooker_remaining
+      - entity: sensor.xiaomi_miio_cooker_mode
+        secondary_info: last-changed
+      - entity: sensor.xiaomi_miio_cooker_stage_name
+        secondary_info: last-changed
+      - entity: sensor.xiaomi_miio_cooker_stage_description
+      - entity: sensor.xiaomi_miio_cooker_rice_id
+      - entity: sensor.xiaomi_miio_cooker_state
+        secondary_info: last-changed
+      - entity: sensor.xiaomi_miio_cooker_taste
+      - entity: sensor.xiaomi_miio_cooker_taste_phase
+      - entity: sensor.xiaomi_miio_cooker_temperature
+      - entity: sensor.xiaomi_miio_cooker_favorite
+      - entity: sensor.xiaomi_miio_cooker_menu
+        secondary_info: last-changed
+  - type: sensor
+    entity: sensor.xiaomi_miio_cooker_remaining
+    detail: 2
+    hours_to_show: 1
+  - type: sensor
+    entity: sensor.xiaomi_miio_cooker_temperature
+    graph: line
+    detail: 2
+    hours_to_show: 2
+```
+
+![Lovelace card example](lovelace-card-example.png "lovelace card")
 
 If you prefer a button instead of a switch entity you could add a lovelace button card to you dashboard:
 
