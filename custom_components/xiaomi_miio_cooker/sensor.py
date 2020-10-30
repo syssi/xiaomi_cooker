@@ -63,7 +63,7 @@ class XiaomiCookerSensor(Entity):
     def async_added_to_hass(self):
         """Register callbacks."""
         self.hass.helpers.dispatcher.async_dispatcher_connect(
-            "xiaomi_cooker_updated", self.async_update_callback
+            "{}_updated".format(COOKER_DOMAIN), self.async_update_callback
         )
 
     @property
