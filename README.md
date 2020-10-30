@@ -54,6 +54,19 @@ xiaomi_miio_cooker:
   host: 192.168.130.88
   token: b7c4a758c251955d2c24b1d9e41ce47d
   model: chunmi.cooker.normal2
+
+# template switch example to start a specific cooking profile
+switch:
+  - platform: template
+    switches:
+      - xiaomi_miio_cooker:
+        value_template: "{{ is_state('sensor.xiaomi_miio_cooker_mode', 'Running') }}"
+        turn_on:
+          service: xiaomi_miio_cooker.start
+          data:
+            profile: "0001E10100000000000080026E10082B126E1412698CAA555555550014280A6E0C02050506050505055A14040A0C0C0D00040505060A0F086E6E20000C0A5A28036468686A0004040500000000000000010202020204040506070708001212180C1E2D2D37000000000000000000000099A5"
+        turn_off:
+          service: xiaomi_miio_cooker.stop
 ```
 
 Configuration variables:
@@ -61,6 +74,26 @@ Configuration variables:
 - **token** (*Required*): The API token of your cooker.
 - **name** (*Optional*): The name of your cooker.
 - **model** (*Optional*): The model of your device. Valid values are `chunmi.cooker.normal2` and `chunmi.cooker.normal5`. This setting can be used to bypass the device model detection and is recommended if your device isn't always available.
+
+If you prefer a button instead of a switch entity you could add a lovelace button card to you dashboard:
+
+```
+type: button
+tap_action:
+  action: call-service
+  service: xiaomi_cooker.start
+  service_data:
+    profile: "010088003201000028000012000000000000000000000846822A6E14002018000F6E82736E140A201810000000000000000000003C8782716E1400200A100000000000000000000000000000000000000000000000000000000000003C0A000000008700000000000000000000000000424D"
+hold_action:
+  action: more-info
+show_icon: true
+show_name: true
+icon: 'mdi:cake'
+name: Baking Cake
+icon_height: 40px
+```
+
+![Lovelace button to start cooking](lovelace-button-start-cooking.png "lovelace button")
 
 ## Platform services
 
