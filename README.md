@@ -81,7 +81,7 @@ If you prefer a button instead of a switch entity you could add a lovelace butto
 type: button
 tap_action:
   action: call-service
-  service: xiaomi_cooker.start
+  service: xiaomi_miio_cooker.start
   service_data:
     profile: "010088003201000028000012000000000000000000000846822A6E14002018000F6E82736E140A201810000000000000000000003C8782716E1400200A100000000000000000000000000000000000000000000000000000000000003C0A000000008700000000000000000000000000424D"
 hold_action:
