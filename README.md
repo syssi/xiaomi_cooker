@@ -70,7 +70,6 @@ Start cooking a profile.
 
 | Service data attribute    | Optional | Description                                                          |
 |---------------------------|----------|----------------------------------------------------------------------|
-| `entity_id`               |       no | Only act on a specific cooker.                                       |
 | `profile`                 |       no | Profile data which describes the temperature curve.                  |
 
 Some cooking profile examples: https://raw.githubusercontent.com/rytilahti/python-miio/master/miio/data/cooker_profiles.json
@@ -82,7 +81,3 @@ Some cooking profile examples: https://raw.githubusercontent.com/rytilahti/pytho
 #### Service `xiaomi_miio_cooker.stop`
 
 Stop the cooking process.
-
-| Service data attribute    | Optional | Description                                                          |
-|---------------------------|----------|----------------------------------------------------------------------|
-| `entity_id`               |       no | Only act on a specific cooker.                                       |
