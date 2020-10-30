@@ -95,6 +95,18 @@ icon_height: 40px
 
 ![Lovelace button to start cooking](lovelace-button-start-cooking.png "lovelace button")
 
+## Debugging
+
+If the custom component doesn't work out of the box for your device please update your configuration to increase the log level:
+
+```
+logger:
+  default: warn
+  logs:
+    custom_components.xiaomi_miio_cooker: debug
+    miio: debug
+```
+
 ## Platform services
 
 #### Service `xiaomi_miio_cooker.start`
