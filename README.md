@@ -54,6 +54,19 @@ xiaomi_miio_cooker:
   host: 192.168.130.88
   token: b7c4a758c251955d2c24b1d9e41ce47d
   model: chunmi.cooker.normal2
+
+# template switch example to start a specific cooking profile
+switch:
+  - platform: template
+    switches:
+      xiaomi_miio_cooker:
+        value_template: "{{ is_state('sensor.xiaomi_miio_cooker_mode', 'Running') }}"
+        turn_on:
+          service: xiaomi_miio_cooker.start
+          data:
+            profile: "0001E10100000000000080026E10082B126E1412698CAA555555550014280A6E0C02050506050505055A14040A0C0C0D00040505060A0F086E6E20000C0A5A28036468686A0004040500000000000000010202020204040506070708001212180C1E2D2D37000000000000000000000099A5"
+        turn_off:
+          service: xiaomi_miio_cooker.stop
 ```
 
 Configuration variables:
@@ -61,6 +74,77 @@ Configuration variables:
 - **token** (*Required*): The API token of your cooker.
 - **name** (*Optional*): The name of your cooker.
 - **model** (*Optional*): The model of your device. Valid values are `chunmi.cooker.normal2` and `chunmi.cooker.normal5`. This setting can be used to bypass the device model detection and is recommended if your device isn't always available.
+
+## Lovelace
+
+```
+type: vertical-stack
+cards:
+  - type: entities
+    title: Ricecooker
+    state_color: false
+    entities:
+      - entity: switch.xiaomi_miio_cooker
+      - entity: sensor.xiaomi_miio_cooker_duration
+      - entity: sensor.xiaomi_miio_cooker_remaining
+      - entity: sensor.xiaomi_miio_cooker_mode
+        secondary_info: last-changed
+      - entity: sensor.xiaomi_miio_cooker_stage_name
+        secondary_info: last-changed
+      - entity: sensor.xiaomi_miio_cooker_stage_description
+      - entity: sensor.xiaomi_miio_cooker_rice_id
+      - entity: sensor.xiaomi_miio_cooker_state
+        secondary_info: last-changed
+      - entity: sensor.xiaomi_miio_cooker_taste
+      - entity: sensor.xiaomi_miio_cooker_taste_phase
+      - entity: sensor.xiaomi_miio_cooker_temperature
+      - entity: sensor.xiaomi_miio_cooker_favorite
+      - entity: sensor.xiaomi_miio_cooker_menu
+        secondary_info: last-changed
+  - type: sensor
+    entity: sensor.xiaomi_miio_cooker_remaining
+    detail: 2
+    hours_to_show: 1
+  - type: sensor
+    entity: sensor.xiaomi_miio_cooker_temperature
+    graph: line
+    detail: 2
+    hours_to_show: 2
+```
+
+![Lovelace card example](lovelace-card-example.png "lovelace card")
+
+If you prefer a button instead of a switch entity you could add a lovelace button card to you dashboard:
+
+```
+type: button
+tap_action:
+  action: call-service
+  service: xiaomi_miio_cooker.start
+  service_data:
+    profile: "010088003201000028000012000000000000000000000846822A6E14002018000F6E82736E140A201810000000000000000000003C8782716E1400200A100000000000000000000000000000000000000000000000000000000000003C0A000000008700000000000000000000000000424D"
+hold_action:
+  action: more-info
+show_icon: true
+show_name: true
+icon: 'mdi:cake'
+name: Baking Cake
+icon_height: 40px
+```
+
+![Lovelace button to start cooking](lovelace-button-start-cooking.png "lovelace button")
+
+## Debugging
+
+If the custom component doesn't work out of the box for your device please update your configuration to increase the log level:
+
+```
+logger:
+  default: warn
+  logs:
+    custom_components.xiaomi_miio_cooker: debug
+    miio: debug
+```
 
 ## Platform services
 
@@ -70,7 +154,6 @@ Start cooking a profile.
 
 | Service data attribute    | Optional | Description                                                          |
 |---------------------------|----------|----------------------------------------------------------------------|
-| `entity_id`               |       no | Only act on a specific cooker.                                       |
 | `profile`                 |       no | Profile data which describes the temperature curve.                  |
 
 Some cooking profile examples: https://raw.githubusercontent.com/rytilahti/python-miio/master/miio/data/cooker_profiles.json
@@ -82,7 +165,3 @@ Some cooking profile examples: https://raw.githubusercontent.com/rytilahti/pytho
 #### Service `xiaomi_miio_cooker.stop`
 
 Stop the cooking process.
-
-| Service data attribute    | Optional | Description                                                          |
-|---------------------------|----------|----------------------------------------------------------------------|
-| `entity_id`               |       no | Only act on a specific cooker.                                       |
