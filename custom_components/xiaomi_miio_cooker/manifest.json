@@ -1,6 +1,7 @@
 {
   "domain": "xiaomi_miio_cooker",
   "name": "Xiaomi Mi Electric Rice Cooker",
+  "version": "0.2.3",
   "documentation": "https://github.com/syssi/xiaomi_cooker",
   "requirements": [
     "construct==2.10.56",
