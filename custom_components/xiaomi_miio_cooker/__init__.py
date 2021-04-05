@@ -39,6 +39,7 @@ MODEL_NORMAL2 = "chunmi.cooker.normal2"
 MODEL_NORMAL3 = "chunmi.cooker.normal3"
 MODEL_NORMAL4 = "chunmi.cooker.normal4"
 MODEL_NORMAL5 = "chunmi.cooker.normal5"
+MODEL_MULTI = "chunmi.cooker.eh1"
 
 SUPPORTED_MODELS = [
     MODEL_PRESSURE1,
@@ -48,6 +49,7 @@ SUPPORTED_MODELS = [
     MODEL_NORMAL3,
     MODEL_NORMAL4,
     MODEL_NORMAL5,
+    MODEL_MULTI,
 ]
 
 CONFIG_SCHEMA = vol.Schema(
@@ -119,9 +121,12 @@ def setup(hass, config):
             raise PlatformNotReady
 
     if model in SUPPORTED_MODELS:
-        from miio import Cooker
+        from miio import Cooker, MultiCooker
 
-        cooker = Cooker(host, token)
+        if model == MODEL_MULTI:
+            cooker = MultiCooker(host, token)
+        else:
+            cooker = Cooker(host, token)
 
         hass.data[DOMAIN][host] = cooker
 
