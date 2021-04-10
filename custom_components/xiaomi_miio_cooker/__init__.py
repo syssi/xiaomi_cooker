@@ -71,6 +71,9 @@ CONFIG_SCHEMA = vol.Schema(
 
 ATTR_MODEL = "model"
 ATTR_PROFILE = "profile"
+ATTR_DURATION = "duration"
+ATTR_SCHEDULE = "schedule"
+ATTR_AKW = "akw"
 
 SUCCESS = ["ok"]
 
@@ -80,7 +83,14 @@ SERVICE_SCHEMA = vol.Schema(
     }
 )
 
-SERVICE_SCHEMA_START = SERVICE_SCHEMA.extend({vol.Required(ATTR_PROFILE): cv.string})
+SERVICE_SCHEMA_START = SERVICE_SCHEMA.extend(
+    {
+        vol.Required(ATTR_PROFILE): cv.string,
+        vol.Optional(ATTR_DURATION): cv.positive_int,
+        vol.Optional(ATTR_SCHEDULE): cv.positive_int,
+        vol.Optional(ATTR_AKW): cv.boolean,
+    }
+)
 
 SERVICE_START = "start"
 SERVICE_STOP = "stop"
@@ -168,7 +178,14 @@ def setup(hass, config):
     def start_service(call):
         """Service to start cooking."""
         profile = call.data.get(ATTR_PROFILE)
-        cooker.start(profile)
+        duration = call.data.get(ATTR_DURATION)
+        schedule = call.data.get(ATTR_SCHEDULE)
+        akw = call.data.get(ATTR_AKW)
+
+        if model == MODEL_MULTI:
+            cooker.start(profile, duration, schedule, akw)
+        else:
+            cooker.start(profile)
 
     def stop_service(call):
         """Service to stop cooking."""
