@@ -1,18 +1,9 @@
-import asyncio
 import logging
-from collections import defaultdict
 from datetime import timedelta
-from functools import partial
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-from homeassistant.const import (
-    ATTR_ENTITY_ID,
-    CONF_HOST,
-    CONF_NAME,
-    CONF_SCAN_INTERVAL,
-    CONF_TOKEN,
-)
+from homeassistant.const import CONF_HOST, CONF_NAME, CONF_SCAN_INTERVAL, CONF_TOKEN
 from homeassistant.exceptions import PlatformNotReady
 from homeassistant.helpers import discovery
 from homeassistant.helpers.dispatcher import dispatcher_send
@@ -106,7 +97,7 @@ def setup(hass, config):
 
     host = config[DOMAIN][CONF_HOST]
     token = config[DOMAIN][CONF_TOKEN]
-    name = config[DOMAIN][CONF_NAME]
+    # name = config[DOMAIN][CONF_NAME]
     model = config[DOMAIN].get(CONF_MODEL)
     scan_interval = config[DOMAIN][CONF_SCAN_INTERVAL]
 
@@ -233,8 +224,8 @@ class XiaomiMiioDevice(Entity):
         return self._state
 
     @property
-    def device_state_attributes(self):
-        """Return the state attributes of the device."""
+    def extra_state_attributes(self):
+        """Return the extra state attributes of the device."""
         return self._state_attrs
 
 
