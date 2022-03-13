@@ -1,5 +1,11 @@
 # Xiaomi Mi Electric Rice Cooker
 
+![GitHub actions](https://github.com/syssi/xiaomi_cooker/actions/workflows/ci.yaml/badge.svg)
+![GitHub stars](https://img.shields.io/github/stars/syssi/xiaomi_cooker)
+![GitHub forks](https://img.shields.io/github/forks/syssi/xiaomi_cooker)
+![GitHub watchers](https://img.shields.io/github/watchers/syssi/xiaomi_cooker)
+[!["Buy Me A Coffee"](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://www.buymeacoffee.com/syssi)
+
 This is a custom component for home assistant to integrate the Xiaomi Mi Electric Rice Cooker V2.
 
 Please follow the instructions on [Retrieving the Access Token](https://home-assistant.io/components/xiaomi/#retrieving-the-access-token) to get the API token to use in the configuration.yaml file.
@@ -161,7 +167,6 @@ The following is an advanced example for a configuration of chunmi.cooker.eh1 su
 
 ```yaml
 # lovelace
-
 type: vertical-stack
 title: Multi Cooker
 cards:
@@ -235,7 +240,6 @@ cards:
 
 ```yaml
 # configuration.yaml
-
 sensor:
   - platform: template
     sensors:
@@ -265,17 +269,14 @@ sensor:
               "0505000000000000000000000000000000000009": "Cake"
             }[states('sensor.xiaomi_miio_cooker_menu')]
           }}
-
 input_datetime:
   rice_cooker_schedule_time:
     name: Time
     has_time: true
     has_date: true
-
 input_boolean:
   rice_cooker_schedule:
     name: Schedule
-
 input_select:
     cooker_programm:
       name: Modus
@@ -291,7 +292,6 @@ input_select:
 
 ```yaml
 # scripts.yaml
-
 rice_cooker_start:
   alias: StartRiceCooker
   sequence:
@@ -317,7 +317,6 @@ rice_cooker_start:
     data: {}
     entity_id: input_boolean.rice_cooker_schedule
   mode: single
-
 rice_cooker_stop:
   alias: StopRiceCooker
   sequence:
