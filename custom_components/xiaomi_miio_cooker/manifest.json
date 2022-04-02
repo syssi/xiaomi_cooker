@@ -8,7 +8,7 @@
   "issue_tracker": "https://github.com/syssi/xiaomi_cooker/issues",
   "requirements": [
     "construct==2.10.56",
-    "git+https://github.com/sschirr/python-miio.git@master#python-miio==0.5.11+sschirrdev"
+    "git+https://github.com/sschirr/python-miio.git@dev_version#python-miio==0.5.11+sschirrdev"
   ],
   "dependencies": [],
   "codeowners": [
