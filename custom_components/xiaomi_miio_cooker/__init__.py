@@ -10,6 +10,8 @@ from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import track_time_interval
 from homeassistant.util.dt import utcnow
+from miio import Cooker, Device, DeviceException
+from miio.cooker import OperationMode
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -78,8 +80,6 @@ SERVICE_STOP = "stop"
 # pylint: disable=unused-argument
 def setup(hass, config):
     """Set up the platform from config."""
-    from miio import Device, DeviceException
-
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
 
@@ -110,8 +110,6 @@ def setup(hass, config):
             raise PlatformNotReady
 
     if model in SUPPORTED_MODELS:
-        from miio import Cooker
-
         cooker = Cooker(host, token)
 
         hass.data[DOMAIN][host] = cooker
@@ -130,7 +128,6 @@ def setup(hass, config):
 
     def update(event_time):
         """Update device status."""
-        from miio.cooker import OperationMode
 
         try:
             state = cooker.status()
@@ -209,7 +206,6 @@ class XiaomiMiioDevice(Entity):
 
 #    async def _try_command(self, mask_error, func, *args, **kwargs):
 #        """Call a device command handling error messages."""
-#        from miio import DeviceException
 #        try:
 #            result = await
 #            self.hass.async_add_job(
