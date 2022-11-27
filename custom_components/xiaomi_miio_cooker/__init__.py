@@ -143,7 +143,7 @@ def setup(hass, config):
 
         except DeviceException as ex:
             dispatcher_send(hass, "{}_unavailable".format(DOMAIN), host)
-            _LOGGER.error("Got exception while fetching the state: %s", ex)
+            _LOGGER.info("Got exception while fetching the state: %s", ex)
 
     update(utcnow())
     track_time_interval(hass, update, scan_interval)
