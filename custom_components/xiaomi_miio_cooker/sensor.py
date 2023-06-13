@@ -19,6 +19,7 @@ SENSOR_TYPES = {
     "menu": ["Menu", None, "menu", None, "mdi:menu"],
     "temperature": ["Temperature", None, "temperature", "°C", None],
     "remaining": ["Remaining", None, "remaining", "min", "mdi:timer"],
+    "cooking_delayed": ["Cooking delayed", None, "cooking_delayed", "min", "mdi:timer"],
     "duration": ["Duration", None, "duration", "min", "mdi:timelapse"],
     "favorite": ["Favorite", None, "favorite", None, "mdi:information-outline"],
     "state": ["State", "stage", "state", None, "mdi:playlist-check"],
