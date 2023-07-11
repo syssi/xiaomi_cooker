@@ -79,6 +79,7 @@ switch:
     switches:
       xiaomi_miio_cooker:
         value_template: "{{ is_state('sensor.xiaomi_miio_cooker_mode', 'Running') }}"
+        unique_id: my_xiaomi_cooker
         turn_on:
           service: xiaomi_miio_cooker.start
           data:
@@ -90,6 +91,7 @@ switch:
 Configuration variables:
 - **host** (*Required*): The IP of your cooker.
 - **token** (*Required*): The API token of your cooker.
+- **unique_id** (*Optional*): Value that uniquely identifies your device, allowing it to be controlled in the Lovelace dashboard.
 - **name** (*Optional*): The name of your cooker.
 - **model** (*Optional*): The model of your device. Valid values are `chunmi.cooker.normal2` and `chunmi.cooker.normal5`. This setting can be used to bypass the device model detection and is recommended if your device isn't always available.
 
