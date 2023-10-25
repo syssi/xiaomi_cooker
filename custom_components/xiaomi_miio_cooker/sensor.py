@@ -61,10 +61,12 @@ class XiaomiCookerSensor(Entity):
         self._unit_of_measurement = config[3]
         self._icon = config[4]
         self._state = None
+        self._state_attributes = {}
 
         self.entity_id = ENTITY_ID_FORMAT.format(
             "{}_{}".format(COOKER_DOMAIN, slugify(self._name))
         )
+        self._unique_id = COOKER_DOMAIN + self.entity_id
 
     async def async_added_to_hass(self):
         """Register callbacks."""
@@ -95,6 +97,7 @@ class XiaomiCookerSensor(Entity):
             # Unset state if child attribute isn't available anymore
             if state is None:
                 self._state = None
+                self._state_attributes[self._name] = None
 
         if state is not None:
             value = getattr(state, self._attr, None)
@@ -108,8 +111,10 @@ class XiaomiCookerSensor(Entity):
                     and temperature_history
                 ):
                     self._state = temperature_history.temperatures.pop()
+                    self._state_attributes[self._name] = temperature_history.temperatures.pop()
                 else:
                     self._state = value
+                    self._state_attributes[self._name] = value
 
         self.async_schedule_update_ha_state()
 
@@ -132,3 +137,13 @@ class XiaomiCookerSensor(Entity):
     def should_poll(self):
         """Return the polling state."""
         return False
+
+    @property
+    def unique_id(self):
+        """Return the unique id."""
+        return self._unique_id
+
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes of the sensor."""
+        return self._state_attributes

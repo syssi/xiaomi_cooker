@@ -177,6 +177,7 @@ class XiaomiMiioDevice(Entity):
         self._available = None
         self._state = None
         self._state_attrs = {}
+        self._unique_id = DOMAIN
 
     @property
     def should_poll(self):
@@ -202,6 +203,11 @@ class XiaomiMiioDevice(Entity):
     def extra_state_attributes(self):
         """Return the extra state attributes of the device."""
         return self._state_attrs
+
+    @property
+    def unique_id(self):
+        """Return the unique id."""
+        return self._unique_id
 
 
 #    async def _try_command(self, mask_error, func, *args, **kwargs):
