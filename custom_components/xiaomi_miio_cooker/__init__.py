@@ -10,8 +10,10 @@ from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import track_time_interval
 from homeassistant.util.dt import utcnow
-from miio import Cooker, Device, DeviceException
-from miio.cooker import OperationMode
+from miio import Device
+from miio.exceptions import DeviceException
+from miio.integrations.chunmi.cooker import Cooker
+from miio.integrations.chunmi.cooker_multi import MultiCooker
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,6 +34,7 @@ MODEL_NORMAL2 = "chunmi.cooker.normal2"
 MODEL_NORMAL3 = "chunmi.cooker.normal3"
 MODEL_NORMAL4 = "chunmi.cooker.normal4"
 MODEL_NORMAL5 = "chunmi.cooker.normal5"
+MODEL_MULTI = "chunmi.cooker.eh1"
 
 SUPPORTED_MODELS = [
     MODEL_PRESSURE1,
@@ -41,6 +44,7 @@ SUPPORTED_MODELS = [
     MODEL_NORMAL3,
     MODEL_NORMAL4,
     MODEL_NORMAL5,
+    MODEL_MULTI,
 ]
 
 CONFIG_SCHEMA = vol.Schema(
@@ -62,6 +66,9 @@ CONFIG_SCHEMA = vol.Schema(
 
 ATTR_MODEL = "model"
 ATTR_PROFILE = "profile"
+ATTR_DURATION = "duration"
+ATTR_SCHEDULE = "schedule"
+ATTR_AKW = "akw"
 
 SUCCESS = ["ok"]
 
@@ -71,7 +78,14 @@ SERVICE_SCHEMA = vol.Schema(
     }
 )
 
-SERVICE_SCHEMA_START = SERVICE_SCHEMA.extend({vol.Required(ATTR_PROFILE): cv.string})
+SERVICE_SCHEMA_START = SERVICE_SCHEMA.extend(
+    {
+        vol.Required(ATTR_PROFILE): cv.string,
+        vol.Optional(ATTR_DURATION): cv.positive_int,
+        vol.Optional(ATTR_SCHEDULE): cv.positive_int,
+        vol.Optional(ATTR_AKW): cv.boolean,
+    }
+)
 
 SERVICE_START = "start"
 SERVICE_STOP = "stop"
@@ -110,7 +124,10 @@ def setup(hass, config):
             raise PlatformNotReady
 
     if model in SUPPORTED_MODELS:
-        cooker = Cooker(host, token)
+        if model == MODEL_MULTI:
+            cooker = MultiCooker(host, token)
+        else:
+            cooker = Cooker(host, token)
 
         hass.data[DOMAIN][host] = cooker
 
@@ -134,7 +151,7 @@ def setup(hass, config):
             _LOGGER.debug("Got new state: %s", state)
             hass.data[DATA_KEY][host][DATA_STATE] = state
 
-            if state.mode in [OperationMode.Running, OperationMode.AutoKeepWarm]:
+            if state.mode in ["running", "autokeepwarm"]:
                 hass.data[DATA_KEY][host][
                     DATA_TEMPERATURE_HISTORY
                 ] = cooker.get_temperature_history()
@@ -151,7 +168,14 @@ def setup(hass, config):
     def start_service(call):
         """Service to start cooking."""
         profile = call.data.get(ATTR_PROFILE)
-        cooker.start(profile)
+        duration = call.data.get(ATTR_DURATION)
+        schedule = call.data.get(ATTR_SCHEDULE)
+        akw = call.data.get(ATTR_AKW)
+
+        if model == MODEL_MULTI:
+            cooker.start(profile, duration, schedule, akw)
+        else:
+            cooker.start(profile)
 
     def stop_service(call):
         """Service to stop cooking."""

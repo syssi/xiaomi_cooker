@@ -23,6 +23,7 @@ Credits: Thanks to [Rytilahti](https://github.com/rytilahti/python-miio) for all
 |                           | chunmi.cooker.normal5  | |
 | Mi Smart Pressure Cooker  | chunmi.cooker.press1   | YLIH01CM  |
 |                           | chunmi.cooker.press2   | |
+| Mi Smart Multi Cooker     | chunmi.cooker.eh1      | |
 
 ## Features
 
@@ -151,6 +152,172 @@ icon_height: 40px
 ```
 
 ![Lovelace button to start cooking](lovelace-button-start-cooking.png "lovelace button")
+
+## Advanced Setup Example (only chunmi.cooker.eh1) [WIP]
+The following is an advanced example for a configuration of chunmi.cooker.eh1 supporting the following:
+
+- Show current cooker status: mode, temp, cooking time
+- Start the cooker
+  - with cooking profile selection
+  - with optional schedule
+- Stop the cooker
+
+![Lovelace button to start cooking](lovelace_advanced_example_multi_cooker_0.png "Multi Cooker Example")
+![Lovelace button to start cooking](lovelace_advanced_example_multi_cooker_1.png "Multi Cooker Example")
+
+```yaml
+# lovelace
+type: vertical-stack
+title: Multi Cooker
+cards:
+  - type: entities
+    state_color: false
+    entities:
+      - entity: sensor.xiaomi_miio_cooker_mode
+      - entity: sensor.xiaomi_miio_cooker_temperature
+      - entity: sensor.cooker_time_remaining
+        name: Remaining Cooking Time
+  - type: conditional
+    conditions:
+      - entity: sensor.xiaomi_miio_cooker_mode
+        state_not: Waiting
+      - entity: sensor.xiaomi_miio_cooker_mode
+        state_not: Unknown
+    card:
+      type: horizontal-stack
+      cards:
+        - type: entities
+          entities:
+            - entity: sensor.xiaomi_miio_cooker_menu
+          show_header_toggle: true
+        - type: button
+          tap_action:
+            action: call-service
+            service: script.rice_cooker_stop
+          show_icon: true
+          name: Stop Cooking
+          show_state: false
+          icon: 'mdi:gesture-tap'
+          icon_height: 40px
+  - type: conditional
+    conditions:
+      - entity: sensor.xiaomi_miio_cooker_mode
+        state: Waiting
+    card:
+      type: horizontal-stack
+      cards:
+        - type: entities
+          entities:
+            - entity: input_select.cooker_programm
+          show_header_toggle: true
+        - type: button
+          tap_action:
+            action: call-service
+            service: script.rice_cooker_start
+          show_icon: true
+          name: Start Cooking
+          show_state: false
+          show_name: true
+          icon: 'mdi:gesture-tap'
+          icon_height: 40px
+  - type: conditional
+    conditions:
+      - entity: sensor.xiaomi_miio_cooker_mode
+        state: Waiting
+    card:
+      type: entities
+      entities:
+        - entity: input_boolean.rice_cooker_schedule
+  - type: conditional
+    conditions:
+      - entity: input_boolean.rice_cooker_schedule
+        state: 'on'
+    card:
+      type: entities
+      entities:
+        - entity: input_datetime.rice_cooker_schedule_time
+```
+
+```yaml
+# configuration.yaml
+sensor:
+  - platform: template
+    sensors:
+      cooker_time_remaining:
+        friendly_name: "Kochzeit"
+        icon_template: "mdi:clock-outline"
+        value_template: >
+          {% if is_state('sensor.xiaomi_miio_cooker_mode', 'Waiting') %}
+            0:00
+          {% else %}
+            {{ ('%02d' % (((states('sensor.xiaomi_miio_cooker_remaining') | int) / 60) | int)) | string + ':' + ( ('%02d' % ((states('sensor.xiaomi_miio_cooker_remaining') | int) % 60)) | string) }}
+          {% endif %}
+      cooker_menu:
+        friendly_name: "Menu"
+        icon_template: "mdi:menu"
+        value_template: >
+          {{
+            {
+              "0000000000000000000000000000000000000001": "Fine Rice",
+              "0101000000000000000000000000000000000002": "Quick Rice",
+              "0202000000000000000000000000000000000003": "Congee",
+              "0303000000000000000000000000000000000004": "Keep warm",
+              "0505000000000000000000000000000000000009": "Cake"
+            }[states('sensor.xiaomi_miio_cooker_menu')]
+          }}
+input_datetime:
+  rice_cooker_schedule_time:
+    name: Time
+    has_time: true
+    has_date: true
+input_boolean:
+  rice_cooker_schedule:
+    name: Schedule
+input_select:
+    cooker_programm:
+      name: Modus
+      options:
+        - Fine Rice
+        - Quick Rice
+        - Congee
+        - Keep warm
+        - Cake
+      initial: Fine Rice
+      icon: mdi:menu
+```
+
+```yaml
+# scripts.yaml
+rice_cooker_start:
+  alias: StartRiceCooker
+  sequence:
+  - service: xiaomi_miio_cooker.start
+    data:
+      schedule: |
+        {% if is_state('input_boolean.rice_cooker_schedule', 'on') %}
+          {{ ((state_attr('input_datetime.rice_cooker_schedule_time', 'timestamp') - now().timestamp()) / 60) | int }}
+        {% else %}
+          0
+        {% endif %}
+      profile: |
+        {{
+          {
+            "Fine Rice": "02010000000001e101000000000000800101050814000000002091827d7800050091822d781c0a0091823c781c1e0091ff827820ffff91828278000500ffff8278ffffff91828278000d00ff828778ff000091827d7800000091827d7800ffff91826078ff0100490366780701086c0078090301af540266780801086c00780a02023c5701667b0e010a71007a0d02ffff5701667b0f010a73007d0d032005000000000000000000000000000000cf53",
+            "Quick Rice": "02010100000002e100280000000000800101050614000000002091827d7800000091823c7820000091823c781c1e0091ff827820ffff91828278000500ffff8278ffffff91828278000d00ff828778ff000082827d7800000091827d7800ffff91826078ff0164490366780701086c007409030200540266780801086c00760a0202785701667b0e010a7100780a02ffff5701667b0f010a73007b0a032005000000000000000000000000000000ddba",
+            "Congee": "02010200000003e2011e0400002800800101050614000000002091827d7800000091827d7800000091827d78001e0091ff877820ffff91827d78001e0091ff8278ffffff91828278001e0091828278060f0091827d7804000091827d7800000091827d780001f54e0255261802062a0482030002eb4e0255261802062a04820300032d4e0252261802062c04820501ffff4e0152241802062c0482050120000000000000000000000000000000009ce2",
+            "Cake": "02010400000afe8801000100003700000100000000000000002091827d7800000091827d7800000091827d78001e0066787d7816000091827d7800000091826e7800000091827d7800000091826e7810ffff918266780a000091827d7800000091827d78000000000078821400108714780300000000007882140010871478030000000000788214001087147a050100000000788214001087147d05012000000000000000000000000000000000aa25",
+            "Keep warm": "020103000000040c00001800000100800100000000000000002091827d7800000091827d7800000091827d78000000915a7d7820000091827d7800000091826e78ff000091827d7800000091826e7810000091826e7810000091827d7800000091827d780000a082007882140010871478030000eb820078821400108714780300012d8200788214001087147a0501ffff8200788214001087147d0501200000000000000000000000000000000090e5"
+          }[states('input_select.cooker_programm')]
+        }}
+  - service: input_boolean.turn_off
+    data: {}
+    entity_id: input_boolean.rice_cooker_schedule
+  mode: single
+rice_cooker_stop:
+  alias: StopRiceCooker
+  sequence:
+  - service: xiaomi_miio_cooker.stop
+```
 
 ## Debugging
 
