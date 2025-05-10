@@ -6,6 +6,8 @@ from homeassistant.components.sensor import ENTITY_ID_FORMAT
 from homeassistant.core import callback
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
+from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.core import HomeAssistant
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -66,10 +68,10 @@ class XiaomiCookerSensor(Entity):
             "{}_{}".format(COOKER_DOMAIN, slugify(self._name))
         )
 
-    async def async_added_to_hass(self):
+    async def async_added_to_hass(hass: HomeAssistant, self):
         """Register callbacks."""
-        self.hass.helpers.dispatcher.async_dispatcher_connect(
-            "{}_updated".format(COOKER_DOMAIN), self.async_update_callback
+        self.async_dispatcher_connect(
+            hass,"{}_updated".format(COOKER_DOMAIN), self.async_update_callback
         )
 
     @property
