@@ -81,8 +81,6 @@ class XiaomiCookerSensor(Entity):
     @callback
     def async_update_callback(self, host):
         """Update state."""
-        from miio.cooker import OperationMode
-
         if self._host is not host:
             return
 
@@ -105,7 +103,7 @@ class XiaomiCookerSensor(Entity):
                 if (
                     self._attr == "temperature"
                     and state.mode
-                    in [OperationMode.Running, OperationMode.AutoKeepWarm]
+                    in ["running", "autokeepwarm"]
                     and temperature_history
                 ):
                     self._state = temperature_history.temperatures.pop()
