@@ -1,4 +1,0 @@
-{
-  "plugins": ["prettier-plugin-sort-json"],
-  "jsonSortOrder": "{\"domain\": 0, \"name\": 1, \"*\": \"lexical\"}"
-}
