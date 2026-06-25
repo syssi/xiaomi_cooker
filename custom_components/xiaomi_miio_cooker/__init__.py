@@ -1,17 +1,19 @@
-import logging
-from datetime import timedelta
+"""Xiaomi MiIO Cooker integration."""
 
-import homeassistant.helpers.config_validation as cv
-import voluptuous as vol
+from datetime import timedelta
+import logging
+
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_SCAN_INTERVAL, CONF_TOKEN
 from homeassistant.exceptions import PlatformNotReady
 from homeassistant.helpers import discovery
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import track_time_interval
 from homeassistant.util.dt import utcnow
 from miio import Cooker, Device, DeviceException
 from miio.cooker import OperationMode
+import voluptuous as vol
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -107,7 +109,7 @@ def setup(hass, config):
                 device_info.hardware_version,
             )
         except DeviceException:
-            raise PlatformNotReady
+            raise PlatformNotReady from None
 
     if model in SUPPORTED_MODELS:
         cooker = Cooker(host, token)
@@ -135,14 +137,14 @@ def setup(hass, config):
             hass.data[DATA_KEY][host][DATA_STATE] = state
 
             if state.mode in [OperationMode.Running, OperationMode.AutoKeepWarm]:
-                hass.data[DATA_KEY][host][
-                    DATA_TEMPERATURE_HISTORY
-                ] = cooker.get_temperature_history()
+                hass.data[DATA_KEY][host][DATA_TEMPERATURE_HISTORY] = (
+                    cooker.get_temperature_history()
+                )
 
-            dispatcher_send(hass, "{}_updated".format(DOMAIN), host)
+            dispatcher_send(hass, f"{DOMAIN}_updated", host)
 
         except DeviceException as ex:
-            dispatcher_send(hass, "{}_unavailable".format(DOMAIN), host)
+            dispatcher_send(hass, f"{DOMAIN}_unavailable", host)
             _LOGGER.info("Got exception while fetching the state: %s", ex)
 
     update(utcnow())

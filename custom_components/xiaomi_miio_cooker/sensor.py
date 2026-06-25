@@ -1,12 +1,14 @@
-import logging
+"""Xiaomi MiIO Cooker sensor platform."""
+
 from enum import Enum
-from typing import Optional
+import logging
 
 from homeassistant.components.sensor import ENTITY_ID_FORMAT
 from homeassistant.core import callback
+from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
-from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from miio.cooker import OperationMode
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,6 +54,8 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 class XiaomiCookerSensor(Entity):
+    """Representation of a Xiaomi Cooker sensor."""
+
     def __init__(self, device, host, config):
         """Initialize sensor."""
         self._device = device
@@ -64,13 +68,13 @@ class XiaomiCookerSensor(Entity):
         self._state = None
 
         self.entity_id = ENTITY_ID_FORMAT.format(
-            "{}_{}".format(COOKER_DOMAIN, slugify(self._name))
+            f"{COOKER_DOMAIN}_{slugify(self._name)}"
         )
 
     async def async_added_to_hass(self):
         """Register callbacks."""
         async_dispatcher_connect(
-            self.hass,"{}_updated".format(COOKER_DOMAIN), self.async_update_callback
+            self.hass, f"{COOKER_DOMAIN}_updated", self.async_update_callback
         )
 
     @property
@@ -81,8 +85,6 @@ class XiaomiCookerSensor(Entity):
     @callback
     def async_update_callback(self, host):
         """Update state."""
-        from miio.cooker import OperationMode
-
         if self._host is not host:
             return
 
@@ -101,16 +103,14 @@ class XiaomiCookerSensor(Entity):
             value = getattr(state, self._attr, None)
             if isinstance(value, Enum):
                 self._state = value.name
+            elif (
+                self._attr == "temperature"
+                and state.mode in [OperationMode.Running, OperationMode.AutoKeepWarm]
+                and temperature_history
+            ):
+                self._state = temperature_history.temperatures.pop()
             else:
-                if (
-                    self._attr == "temperature"
-                    and state.mode
-                    in [OperationMode.Running, OperationMode.AutoKeepWarm]
-                    and temperature_history
-                ):
-                    self._state = temperature_history.temperatures.pop()
-                else:
-                    self._state = value
+                self._state = value
 
         self.async_schedule_update_ha_state()
 
@@ -125,7 +125,7 @@ class XiaomiCookerSensor(Entity):
         return self._unit_of_measurement
 
     @property
-    def icon(self) -> Optional[str]:
+    def icon(self) -> str | None:
         """Return the icon to use in the frontend, if any."""
         return self._icon
 
