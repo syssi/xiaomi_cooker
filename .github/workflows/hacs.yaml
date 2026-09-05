@@ -1,0 +1,17 @@
+name: HACS
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - develop
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+      - uses: hacs/action@d556e736723344f83838d08488c983a15381059a  # 22.5.0
+        with:
+          category: integration
