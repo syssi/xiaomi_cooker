@@ -4,6 +4,7 @@ from datetime import timedelta
 import json
 import logging
 from pathlib import Path
+from typing import Any
 
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_SCAN_INTERVAL, CONF_TOKEN
 from homeassistant.exceptions import PlatformNotReady
@@ -249,7 +250,7 @@ class XiaomiMiioDevice(Entity):
 
         self._available = None
         self._state = None
-        self._state_attrs = {}
+        self._state_attrs: dict[str, Any] = {}
 
     @property
     def should_poll(self):

@@ -49,11 +49,11 @@ start:
           mode: dropdown
           options:
             - label: Soft
-              value: 0
+              value: "0"
             - label: Moderate
-              value: 1
+              value: "1"
             - label: Rigid
-              value: 2
+              value: "2"
 
 stop:
   name: Stop cooking
