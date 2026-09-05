@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Install Home Assistant and the dev tooling into the container.
+# The integration's own requirements (python-miio from the fork) are NOT installed
+# here on purpose - Home Assistant installs them from manifest.json at first run,
+# which is exactly the code path we need to exercise.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+python -m pip install --upgrade pip
+python -m pip install --upgrade homeassistant ruff pre-commit

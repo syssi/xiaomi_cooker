@@ -9,3 +9,6 @@ __pycache__/
 local/*
 *.bak
 venv/
+
+# Local Home Assistant test instance
+config/

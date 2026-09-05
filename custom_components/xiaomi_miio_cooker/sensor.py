@@ -102,9 +102,12 @@ class XiaomiCookerSensor(Entity):
                 # than importing one enum and comparing it against the other model's.
                 and getattr(state.mode, "name", None)
                 in ("Running", "AutoKeepWarm")
+                # A TemperatureHistory object is always truthy, so check the readings
+                # themselves - an empty history would otherwise raise IndexError below.
                 and temperature_history
+                and temperature_history.temperatures
             ):
-                self._state = temperature_history.temperatures.pop()
+                self._state = temperature_history.temperatures[-1]
             else:
                 self._state = value
 
