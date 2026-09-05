@@ -26,10 +26,17 @@ SENSOR_TYPES = {
     "temperature": ["Temperature", None, "temperature", "°C", "mdi:thermometer"],
     "duration": ["Duration", None, "duration", "min", "mdi:timelapse"],
     "keep_warm": ["Keep warm", None, "keep_warm", None, "mdi:heat-wave"],
-    "keep_warm_duration": ["Keep warm duration", None, "keep_warm_duration", None, "mdi:timer"],
+    "keep_warm_duration": [
+        "Keep warm duration",
+        None,
+        "keep_warm_duration",
+        None,
+        "mdi:timer",
+    ],
     "rice": ["Rice Id", None, "rice", None, "mdi:rice"],
     "taste": ["Taste", None, "taste", None, "mdi:flash-outline"],
 }
+
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the Xiaomi Cooker sensors."""
@@ -100,8 +107,7 @@ class XiaomiCookerSensor(Entity):
                 # The legacy Cooker and CookerWY3 OperationMode enums are distinct
                 # classes that share these member names, so match on the name rather
                 # than importing one enum and comparing it against the other model's.
-                and getattr(state.mode, "name", None)
-                in ("Running", "AutoKeepWarm")
+                and getattr(state.mode, "name", None) in ("Running", "AutoKeepWarm")
                 # A TemperatureHistory object is always truthy, so check the readings
                 # themselves - an empty history would otherwise raise IndexError below.
                 and temperature_history

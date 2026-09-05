@@ -1,16 +1,22 @@
-import logging
+"""Recipe database for the Xiaomi rice cooker."""
 
-from pathlib import Path
 import json
-
+import logging
+from pathlib import Path
 
 _LOGGER = logging.getLogger(__name__)
 
 
 RECIPE_FOLDER = Path(__file__).parent / "recipes"
 
+
 class Recipes:
-    def __init__(self, model:str="chunmi.cooker.wy3", folder: Path = RECIPE_FOLDER) -> None:
+    """Named cooking profiles bundled for a given cooker model."""
+
+    def __init__(
+        self, model: str = "chunmi.cooker.wy3", folder: Path = RECIPE_FOLDER
+    ) -> None:
+        """Load the recipes bundled for the given model."""
         self.model = model
         self.folder = folder
 
@@ -24,7 +30,9 @@ class Recipes:
         ordered_recipes = sorted(recipes, key=lambda k: k["order"])
 
         # Keep only the name and cookcode
-        options = {recipe["name"].strip(): recipe["cookcode"] for recipe in ordered_recipes}
+        options = {
+            recipe["name"].strip(): recipe["cookcode"] for recipe in ordered_recipes
+        }
 
         return options
 

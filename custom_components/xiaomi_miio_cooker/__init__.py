@@ -13,10 +13,10 @@ from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import track_time_interval
 from homeassistant.util.dt import utcnow
-import voluptuous as vol
 from miio import Cooker, CookerWY3, Device, DeviceException
 from miio.integrations.chunmi.cooker.cooker_wy3 import OperationMode
 from miio.miot_models import DeviceModel
+import voluptuous as vol
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -132,12 +132,12 @@ def setup(hass, config):
 
     if model in SUPPORTED_MODELS:
         if model == MODEL_WY3:
+
             def get_mapping_from_file(file):
                 fullmap = json.loads(file.read_text())
+
                 def get_iid(element):
-                    return {
-                        element["type"][:1]+"iid": element["iid"]
-                    }
+                    return {element["type"][:1] + "iid": element["iid"]}
 
                 data = {}
 
@@ -149,26 +149,29 @@ def setup(hass, config):
                     pa = [*properties.values(), *actions.values()]
 
                     for propact in pa:
-                        d = data[propact["name"]]={
-                                **siid,
-                                **get_iid(propact)
-                                }
+                        data[propact["name"]] = {**siid, **get_iid(propact)}
 
                 return data
 
-
-            mapping_file = Path(__file__).parent / f"miot_specifications/mappings/{model}.json"
+            mapping_file = (
+                Path(__file__).parent / f"miot_specifications/mappings/{model}.json"
+            )
             mapping = get_mapping_from_file(mapping_file)
 
             cooker = CookerWY3(
                 ip=host,
-                token = token,
-                model = model,
-                mapping = mapping,
-                )
+                token=token,
+                model=model,
+                mapping=mapping,
+            )
 
-            specifications_file = Path(__file__).parent / f"miot_specifications/specifications/{model}.json"
-            device_model = DeviceModel.model_validate_json(specifications_file.read_text())
+            specifications_file = (
+                Path(__file__).parent
+                / f"miot_specifications/specifications/{model}.json"
+            )
+            device_model = DeviceModel.model_validate_json(
+                specifications_file.read_text()
+            )
             cooker.initialize_model(device_model)
         else:
             cooker = Cooker(host, token)
