@@ -1,0 +1,21 @@
+name: mypy
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - develop
+  pull_request:
+
+jobs:
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: |
+          pip install mypy
+      - name: Run mypy
+        run: mypy custom_components/xiaomi_miio_cooker

@@ -1,7 +1,16 @@
 start:
+  name: Start cooking
   description: Start cooking a profile.
   fields:
+    entity_id:
+      name: Entity ID
+      description: Name of the xiaomi miio entity.
+      selector:
+        entity:
+          integration: xiaomi_miio_cooker
+          domain: xiaomi_miio_cooker
     profile:
+      name: Profile
       description: Profile data which describes the temperature curve.
       example: 01060500000008090c000c00060000001200000002aa0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000280a0f260300915573000000008278736e001000756e0028050075826e002810ff75266e0228100069005a00b2e6
       required: true
@@ -40,12 +49,20 @@ start:
           mode: dropdown
           options:
             - label: Soft
-              value: 0
+              value: "0"
             - label: Moderate
-              value: 1
+              value: "1"
             - label: Rigid
-              value: 2
+              value: "2"
 
 stop:
+  name: Stop cooking
   description: Stop the cooking process.
-
+  fields:
+    entity_id:
+      name: Entity ID
+      description: Name of the xiaomi miio entity.
+      selector:
+        entity:
+          integration: xiaomi_miio_cooker
+          domain: xiaomi_miio_cooker

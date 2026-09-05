@@ -1,11 +1,13 @@
+"""Xiaomi MiIO Cooker recipe select platform."""
+
 import logging
 
 from homeassistant.components.select import SelectEntity
 from miio.integrations.chunmi.cooker.cooker_wy3 import Wy3CookerProfile
+
 from .recipes import Recipes
 
 _LOGGER = logging.getLogger(__name__)
-
 
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
@@ -26,17 +28,17 @@ class RecipeSelector(SelectEntity):
         self._name = "Xiaomi Cooker Recipe Selection"
         self._recipes = Recipes()
         self.update_recipes()
-        self._attr_current_option = list(self._attr_options.keys())[0]
+        self._attr_current_option = next(iter(self._attr_options))
 
         self.update_current_cookcode()
         self.update_recipe_attributes()
 
     def select_option(self, option: str) -> None:
+        """Select a recipe by name."""
         self._attr_current_option = option
 
         self.update_current_cookcode()
         self.update_recipe_attributes()
-
 
     def update_recipes(self):
         """Update state."""
@@ -44,10 +46,15 @@ class RecipeSelector(SelectEntity):
 
     def update_current_cookcode(self):
         """Return the cookcode of the selected recipe."""
-        self._current_cookcode = self._recipes.get_cookcode_by_name(self._attr_current_option)
+        self._current_cookcode = self._recipes.get_cookcode_by_name(
+            self._attr_current_option
+        )
 
     def update_recipe_attributes(self):
-        self._recipe_attributes = Wy3CookerProfile(self.current_cookcode).get_recipe_attributes()
+        """Refresh the cached attributes of the selected recipe."""
+        self._recipe_attributes = Wy3CookerProfile(
+            self.current_cookcode
+        ).get_recipe_attributes()
 
     @property
     def name(self):
@@ -63,6 +70,7 @@ class RecipeSelector(SelectEntity):
     def current_cookcode(self):
         """Return the cookcode of the selected recipe."""
         return self._current_cookcode
+
     @property
     def recipe_attributes(self):
         """Return the recipe attributes."""
@@ -76,4 +84,3 @@ class RecipeSelector(SelectEntity):
             **self._recipe_attributes,
         }
         return attributes
-

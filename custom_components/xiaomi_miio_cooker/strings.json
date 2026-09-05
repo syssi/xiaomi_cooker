@@ -1,0 +1,28 @@
+{
+  "services": {
+    "start": {
+      "name": "Start cooking",
+      "description": "Start cooking a profile.",
+      "fields": {
+        "entity_id": {
+          "name": "Entity ID",
+          "description": "Name of the xiaomi miio entity."
+        },
+        "profile": {
+          "name": "Profile",
+          "description": "Profile data which describes the temperature curve."
+        }
+      }
+    },
+    "stop": {
+      "name": "Stop cooking",
+      "description": "Stop the cooking process.",
+      "fields": {
+        "entity_id": {
+          "name": "Entity ID",
+          "description": "Name of the xiaomi miio entity."
+        }
+      }
+    }
+  }
+}

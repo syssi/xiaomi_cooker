@@ -1,20 +1,23 @@
-import logging
-from datetime import timedelta
+"""Xiaomi MiIO Cooker integration."""
 
-import homeassistant.helpers.config_validation as cv
-import voluptuous as vol
+from datetime import timedelta
+import json
+import logging
+from pathlib import Path
+from typing import Any
+
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_SCAN_INTERVAL, CONF_TOKEN
 from homeassistant.exceptions import PlatformNotReady
 from homeassistant.helpers import discovery
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import track_time_interval
 from homeassistant.util.dt import utcnow
-from miio import Cooker, Device, DeviceException, CookerWY3
+from miio import Cooker, CookerWY3, Device, DeviceException
 from miio.integrations.chunmi.cooker.cooker_wy3 import OperationMode
 from miio.miot_models import DeviceModel
-import json
-from pathlib import Path
+import voluptuous as vol
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -126,16 +129,16 @@ def setup(hass, config):
                 device_info.hardware_version,
             )
         except DeviceException:
-            raise PlatformNotReady
+            raise PlatformNotReady from None
 
     if model in SUPPORTED_MODELS:
         if model == MODEL_WY3:
+
             def get_mapping_from_file(file):
                 fullmap = json.loads(file.read_text())
+
                 def get_iid(element):
-                    return {
-                        element["type"][:1]+"iid": element["iid"]
-                    }
+                    return {element["type"][:1] + "iid": element["iid"]}
 
                 data = {}
 
@@ -147,26 +150,29 @@ def setup(hass, config):
                     pa = [*properties.values(), *actions.values()]
 
                     for propact in pa:
-                        d = data[propact["name"]]={
-                                **siid,
-                                **get_iid(propact)
-                                }
+                        data[propact["name"]] = {**siid, **get_iid(propact)}
 
                 return data
 
-
-            mapping_file = Path(__file__).parent / f"miot_specifications/mappings/{model}.json"
+            mapping_file = (
+                Path(__file__).parent / f"miot_specifications/mappings/{model}.json"
+            )
             mapping = get_mapping_from_file(mapping_file)
 
             cooker = CookerWY3(
                 ip=host,
-                token = token,
-                model = model,
-                mapping = mapping,
-                )
+                token=token,
+                model=model,
+                mapping=mapping,
+            )
 
-            specifications_file = Path(__file__).parent / f"miot_specifications/specifications/{model}.json"
-            device_model = DeviceModel.parse_file(specifications_file)
+            specifications_file = (
+                Path(__file__).parent
+                / f"miot_specifications/specifications/{model}.json"
+            )
+            device_model = DeviceModel.model_validate_json(
+                specifications_file.read_text()
+            )
             cooker.initialize_model(device_model)
         else:
             cooker = Cooker(host, token)
@@ -194,14 +200,14 @@ def setup(hass, config):
             hass.data[DATA_KEY][host][DATA_STATE] = state
 
             if state.mode in [OperationMode.Running, OperationMode.AutoKeepWarm]:
-                hass.data[DATA_KEY][host][
-                    DATA_TEMPERATURE_HISTORY
-                ] = cooker.get_temperature_history()
+                hass.data[DATA_KEY][host][DATA_TEMPERATURE_HISTORY] = (
+                    cooker.get_temperature_history()
+                )
 
-            dispatcher_send(hass, "{}_updated".format(DOMAIN), host)
+            dispatcher_send(hass, f"{DOMAIN}_updated", host)
 
         except DeviceException as ex:
-            dispatcher_send(hass, "{}_unavailable".format(DOMAIN), host)
+            dispatcher_send(hass, f"{DOMAIN}_unavailable", host)
             _LOGGER.info("Got exception while fetching the state: %s", ex)
 
     update(utcnow())
@@ -244,7 +250,7 @@ class XiaomiMiioDevice(Entity):
 
         self._available = None
         self._state = None
-        self._state_attrs = {}
+        self._state_attrs: dict[str, Any] = {}
 
     @property
     def should_poll(self):
